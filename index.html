@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MOMOCITA | Premium Karachi Momos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF3B30;
+            --accent: #FF9500;
+            --bg: #050507;
+            --text: #F5F5F7;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none !important; }
+       
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ===== REALISTIC STEAM + SOFT EMBERS BACKGROUND ===== */
+        .bg-animations {
+            position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none;
+        }
+        .steam {
+            position: absolute;
+            width: 3px;
+            height: 90px;
+            background: linear-gradient(transparent, rgba(240,240,240,0.22));
+            border-radius: 50%;
+            opacity: 0.16;
+            animation: steamRise linear infinite;
+            filter: blur(2.5px);
+        }
+        .ember {
+            position: absolute;
+            width: 2.8px;
+            height: 2.8px;
+            background: #FFAA66;
+            border-radius: 50%;
+            opacity: 0.35;
+            box-shadow: 0 0 9px #FF6600;
+            animation: emberFloat 4.5s ease-in-out infinite;
+        }
+
+        @keyframes steamRise {
+            0% { transform: translateY(100vh) scale(0.5); opacity: 0; }
+            30% { opacity: 0.22; }
+            100% { transform: translateY(-150px) scale(1.5); opacity: 0; }
+        }
+        @keyframes emberFloat {
+            0% { transform: translateY(0) scale(0.7); opacity: 0.3; }
+            50% { transform: translateY(-90px) scale(1.25); opacity: 0.65; }
+            100% { transform: translateY(-180px) scale(0.5); opacity: 0; }
+        }
+
+        .glow-orb {
+            position: absolute; border-radius: 50%; filter: blur(180px); opacity: 0.11;
+            animation: orbFloat 18s infinite alternate ease-in-out;
+        }
+        .orb-1 { width: 70vw; height: 70vw; background: #FF3B30; top: -40%; left: -30%; }
+        .orb-2 { width: 55vw; height: 55vw; background: #FF9500; bottom: -35%; right: -25%; animation-delay: -9s; }
+
+        @keyframes orbFloat { 0% { transform: translate(0, 0); } 100% { transform: translate(12%, 12%); } }
+
+        /* Cursor */
+        .cursor { position: fixed; top: 0; left: 0; width: 15px; height: 15px; background: var(--primary); border-radius: 50%; pointer-events: none; z-index: 9999; mix-blend-mode: screen; transition: transform 0.1s ease-out; }
+        .cursor-ring { position: fixed; top: 0; left: 0; width: 40px; height: 40px; border: 1px solid var(--accent); border-radius: 50%; pointer-events: none; z-index: 9998; transition: transform 0.2s ease-out; }
+
+        /* Navbar */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 22px 8%;
+            display: flex; justify-content: space-between; align-items: center; z-index: 1000;
+            background: rgba(5, 5, 7, 0.85); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .logo { font-size: 1.55rem; font-weight: 900; letter-spacing: 2px; color: var(--text); text-decoration: none; }
+        .logo span { color: var(--primary); }
+        .nav-btn {
+            background: var(--text); color: var(--bg); padding: 11px 26px;
+            border-radius: 50px; font-weight: 700; text-decoration: none;
+            transition: 0.3s; font-size: 0.92rem;
+        }
+        .nav-btn:hover { background: var(--primary); color: white; box-shadow: 0 0 25px rgba(255, 59, 48, 0.5); }
+
+        /* Hero */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; padding: 140px 5% 80px; position: relative;
+        }
+        .hero h1 {
+            font-size: clamp(3.2rem, 8vw, 6.2rem); font-weight: 900; line-height: 1.05;
+            margin-bottom: 24px; letter-spacing: -2.5px;
+        }
+        .hero h1 span {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: clamp(1.05rem, 2.2vw, 1.25rem); color: #A0A0A5; max-width: 620px;
+            margin-bottom: 50px; font-weight: 300;
+        }
+
+        /* Sections */
+        .reveal { opacity: 0; transform: translateY(60px); transition: all 0.9s cubic-bezier(0.25, 1, 0.5, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        .section-title { text-align: center; font-size: clamp(2.6rem, 5.5vw, 4.2rem); font-weight: 900; margin-bottom: 70px; letter-spacing: -1.2px; }
+
+        /* Menu */
+        .menu-section { padding: 120px 8%; position: relative; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 40px; }
+       
+        .glass-card {
+            background: var(--glass); backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border); border-radius: 28px;
+            padding: 32px; transition: 0.4s ease; overflow: hidden;
+        }
+        .glass-card:hover { 
+            transform: translateY(-12px); 
+            border-color: rgba(255, 59, 48, 0.6); 
+            background: rgba(255,255,255,0.07); 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6); 
+        }
+       
+        .card-img-wrap { 
+            width: 100%; height: 260px; border-radius: 20px; overflow: hidden; 
+            margin-bottom: 28px; background: #111; 
+        }
+        .card-img-wrap img { 
+            width: 100%; height: 100%; object-fit: cover; transition: 0.9s; opacity: 0.85; 
+        }
+        .glass-card:hover img { transform: scale(1.1); opacity: 1; }
+       
+        .glass-card h3 { font-size: 1.85rem; margin-bottom: 12px; font-weight: 700; }
+        .glass-card p { color: #A0A0A5; font-size: 1.02rem; margin-bottom: 28px; line-height: 1.55; }
+        .price { font-size: 2.1rem; font-weight: 900; color: var(--primary); }
+
+        /* Why Choose Us */
+        .why-section {
+            padding: 110px 8%; background: rgba(255,59,48,0.07); text-align: center;
+        }
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+        .why-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 28px;
+            transition: 0.4s;
+        }
+        .why-card:hover {
+            transform: translateY(-8px);
+            border-color: var(--primary);
+        }
+        .why-card h3 {
+            font-size: 1.55rem;
+            margin-bottom: 16px;
+            color: var(--accent);
+        }
+
+        /* Contact */
+        .info-section { padding: 120px 8%; }
+        .info-container {
+            background: linear-gradient(145deg, rgba(20,20,25,0.7) 0%, rgba(5,5,7,0.9) 100%);
+            border: 1px solid var(--glass-border); border-radius: 32px; 
+            padding: 70px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; 
+            backdrop-filter: blur(20px);
+        }
+        .info-block h4 { 
+            color: var(--primary); font-size: 1.25rem; margin-bottom: 18px; 
+            text-transform: uppercase; letter-spacing: 2px; font-weight: 900; 
+        }
+        .info-block p, .info-block a { 
+            font-size: 1.25rem; color: var(--text); text-decoration: none; 
+            font-weight: 500; margin-bottom: 10px; 
+        }
+        .info-block a:hover { color: var(--accent); }
+
+        footer { 
+            text-align: center; padding: 50px 8%; border-top: 1px solid var(--glass-border); 
+            color: #A0A0A5; font-size: 0.95rem; letter-spacing: 1px; 
+        }
+
+        @media (max-width: 768px) {
+            .info-container { grid-template-columns: 1fr; padding: 50px 30px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor"></div>
+    <div class="cursor-ring"></div>
+
+    <!-- Background -->
+    <div class="bg-animations" id="bgAnimations">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <nav>
+        <a href="#" class="logo">MOMO<span>CITA</span></a>
+        <a href="#contact" class="nav-btn">Order Now</a>
+    </nav>
+
+    <main>
+        <!-- Hero -->
+        <section class="hero">
+            <h1 class="reveal">Karachi's Street Soul.<br><span>Premium Flavor.</span></h1>
+            <p class="reveal delay-1">Hand-folded momos with real desi fire. Steamed. Fried. Or frozen for your late-night cravings. Born in Gulistan-e-Johar.</p>
+            <div class="reveal delay-2">
+                <a href="#menu" class="nav-btn" style="padding: 18px 48px; font-size: 1.15rem; background: var(--primary); color: white;">Explore Menu</a>
+            </div>
+        </section>
+
+        <!-- Why Choose Us -->
+        <section class="why-section">
+            <h2 class="section-title reveal">Why MOMOCITA?</h2>
+            <div class="why-grid">
+                <div class="why-card reveal">
+                    <h3>Fresh Daily</h3>
+                    <p>Hand-rolled dough every morning. No frozen shortcuts in our kitchen.</p>
+                </div>
+                <div class="why-card reveal">
+                    <h3>Real Karachi Heat</h3>
+                    <p>Bold Pakistani spices and authentic street-style recipes.</p>
+                </div>
+                <div class="why-card reveal">
+                    <h3>Steamed or Fried</h3>
+                    <p>Plus frozen packs with our signature sauce. Fresh or ready-to-cook.</p>
+                </div>
+                <div class="why-card reveal">
+                    <h3>GenZ Approved</h3>
+                    <p>Premium quality, fast delivery, and vibes that actually match the streets.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu -->
+        <section id="menu" class="menu-section">
+            <h2 class="section-title reveal">Signature Drops</h2>
+           
+            <div class="grid">
+                <div class="glass-card reveal delay-1">
+                    <div class="card-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1625220194771-7ebdea0b70b9?auto=format&fit=crop&q=80&w=800" alt="Steamed Momos">
+                    </div>
+                    <h3>Signature Steamed</h3>
+                    <p>Juicy chicken or veg filling in ultra-thin wrappers. Paired with our house chili-garlic sauce.</p>
+                    <div class="price">Rs. 650</div>
+                    <button onclick="addToCart('Signature Steamed')" style="margin-top:20px; width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:50px; font-weight:700; font-size:1rem;">Add to Order</button>
+                </div>
+
+                <div class="glass-card reveal delay-2">
+                    <div class="card-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1599307737332-1b6c0032e578?auto=format&fit=crop&q=80&w=800" alt="Fried Momos">
+                    </div>
+                    <h3>Golden Fried</h3>
+                    <p>Crispy outside, explosive flavor inside. The crunch that hits different.</p>
+                    <div class="price">Rs. 750</div>
+                    <button onclick="addToCart('Golden Fried')" style="margin-top:20px; width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:50px; font-weight:700; font-size:1rem;">Add to Order</button>
+                </div>
+
+                <div class="glass-card reveal delay-3">
+                    <div class="card-img-wrap">
+                        <img src="https://images.unsplash.com/photo-1496116218417-1a781b1c416c?auto=format&fit=crop&q=80&w=800" alt="Frozen Momos">
+                    </div>
+                    <h3>Frozen Stash Pack</h3>
+                    <p>12 pieces + 2 sachets of signature sauce. Steam or fry at home.</p>
+                    <div class="price">Rs. 1,200</div>
+                    <button onclick="addToCart('Frozen Stash Pack')" style="margin-top:20px; width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:50px; font-weight:700; font-size:1rem;">Add to Order</button>
+                </div>
+
+                <!-- New Sauce Item -->
+                <div class="glass-card reveal delay-1">
+                    <div class="card-img-wrap" style="background:#1a0f00; display:flex; align-items:center; justify-content:center; font-size:4rem;">
+                        🔥
+                    </div>
+                    <h3>Momocita Special Sauce</h3>
+                    <p>Our signature extra fiery chili garlic sauce. The one that makes everything better.</p>
+                    <div class="price">Rs. 50</div>
+                    <button onclick="addToCart('Momocita Special Sauce')" style="margin-top:20px; width:100%; padding:14px; background:var(--primary); color:white; border:none; border-radius:50px; font-weight:700; font-size:1rem;">Add to Order</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact -->
+        <section id="contact" class="info-section">
+            <h2 class="section-title reveal">Find <span>Us</span></h2>
+            <div class="info-container reveal delay-1">
+                <div class="info-block">
+                    <h4>Location</h4>
+                    <p>Block C3, Flat OLO</p>
+                    <p>Hunaid City, Gulistan-e-Johar</p>
+                    <p>Karachi, Pakistan</p>
+                </div>
+                <div class="info-block">
+                    <h4>Timings</h4>
+                    <p>12:00 PM — 10:00 PM</p>
+                    <p><span>Open Daily</span></p>
+                   
+                    <h4 style="margin-top: 50px;">Contact</h4>
+                    <a href="tel:03182394961">0318 2394961</a>
+                    <a href="mailto:ranabdullah181@gmail.com">ranabdullah181@gmail.com</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 MOMOCITA KARACHI • BUILT FOR THE STREETS</p>
+    </footer>
+
+    <script>
+        // Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorRing = document.querySelector('.cursor-ring');
+       
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.transform = `translate(${e.clientX - 7.5}px, ${e.clientY - 7.5}px)`;
+            setTimeout(() => {
+                cursorRing.style.transform = `translate(${e.clientX - 20}px, ${e.clientY - 20}px)`;
+            }, 40);
+        });
+
+        // Realistic Background Particles
+        function createRealisticBg() {
+            const bg = document.getElementById('bgAnimations');
+            
+            // Steam
+            for (let i = 0; i < 28; i++) {
+                const s = document.createElement('div');
+                s.className = 'steam';
+                s.style.left = Math.random() * 100 + 'vw';
+                s.style.animationDuration = (Math.random() * 9 + 14) + 's';
+                s.style.animationDelay = '-' + Math.random() * 25 + 's';
+                s.style.opacity = Math.random() * 0.16 + 0.08;
+                s.style.height = (Math.random() * 110 + 80) + 'px';
+                bg.appendChild(s);
+            }
+
+            // Soft Embers
+            for (let i = 0; i < 18; i++) {
+                const e = document.createElement('div');
+                e.className = 'ember';
+                e.style.left = Math.random() * 100 + 'vw';
+                e.style.bottom = (Math.random() * 35 + 15) + '%';
+                e.style.animationDuration = (Math.random() * 3.5 + 4) + 's';
+                e.style.animationDelay = '-' + Math.random() * 8 + 's';
+                bg.appendChild(e);
+            }
+        }
+
+        // Scroll Reveal
+        window.addEventListener('load', () => {
+            createRealisticBg();
+            
+            const reveals = document.querySelectorAll('.reveal');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('active');
+                });
+            }, { threshold: 0.15 });
+            reveals.forEach(el => observer.observe(el));
+        });
+
+        // Add to Cart Toast
+        function addToCart(item) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `position:fixed; bottom:40px; left:50%; transform:translateX(-50%); background:rgba(255,59,48,0.95); color:white; padding:14px 34px; border-radius:50px; font-weight:700; z-index:10000; white-space:nowrap; box-shadow:0 10px 30px rgba(255,59,48,0.4);`;
+            toast.textContent = `✅ ${item} added`;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2600);
+        }
+    </script>
+</body>
+</html>
